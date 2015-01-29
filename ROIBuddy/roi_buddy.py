@@ -14,7 +14,6 @@ from shapely.geometry import MultiPolygon, Polygon
 from skimage import transform as tf
 import itertools as it
 from random import shuffle
-import warnings as wa
 
 from roiBuddyUI import Ui_ROI_Buddy
 from importROIsWidget import Ui_importROIsWidget
@@ -39,8 +38,7 @@ from guiqwt.events import setup_standard_tool_filter, PanHandler
 from guiqwt.image import ImageItem
 
 
-icon_filepath = \
-    './icons/'
+icon_filepath = '../icons/'
 
 if isdir('/data/'):
     data_path = '/data/'
