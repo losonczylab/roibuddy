@@ -1,0 +1,3 @@
+Register ROIs,"Begin automatic registration using the currently active dataset as the registration template.
+If datasets do not match, an error dialog will identify the datasets that could be aligned."
+Propagate Tags,"In align mode, the propagate tags button distributes tags across ROI objects from different imaging datasets sharing the same ``id`` property.  The user can select which tags to propagate.  Thus, regions need only be tagged in one dataset, and these tags can be added to other recordings of the same region."

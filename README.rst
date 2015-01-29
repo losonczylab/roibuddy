@@ -14,7 +14,7 @@ In addition it can be used for registering ROIs from different imaging
 sessions of the same field-of-view, allowing for the longitudinal tracking of
 cells in serial imaging experiments.
 
-.. figure:: roi_buddy/overview.jpg
+.. figure:: doc/overview.jpg
    :align:  center
 
 Typical Workflow
@@ -72,25 +72,25 @@ User Interface
 File Menu
 ---------
 .. csv-table::
-    :file: roi_buddy/File_Menu.csv
+    :file: doc/File_Menu.csv
     :header: "File Menu Option", "Action"
     :widths: 1, 4
 
 Control Panel
 -------------
-.. figure:: roi_buddy/main_panel.jpg
+.. figure:: doc/main_panel.jpg
    :align:  center
 
 Toggling modes
 ++++++++++++++
 .. csv-table::
-    :file: roi_buddy/control_panel_modes.csv
+    :file: doc/control_panel_modes.csv
     :widths: 1, 4
 
 Initializing SIMA imaging dataset and ROI List objects
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 .. csv-table::
-    :file: roi_buddy/control_panel_initialize_sets.csv
+    :file: doc/control_panel_initialize_sets.csv
     :widths: 1, 4
 
 Registering ROI objects across multiple imaging sessions
@@ -103,7 +103,7 @@ between datasets, which can be manually adjusted by merging/unmerging ROIs from 
 are matched across days are assigned the same ``id`` property which is denoted visibly by giving them all the same color.
 
 .. csv-table::
-    :file: roi_buddy/control_panel_registration.csv
+    :file: doc/control_panel_registration.csv
     :widths: 1, 4
 
 .. warning::
@@ -116,7 +116,7 @@ are matched across days are assigned the same ``id`` property which is denoted v
 Toggling the visibility of ROIs
 +++++++++++++++++++++++++++++++
 .. csv-table::
-    :file: roi_buddy/control_panel_view_rois.csv
+    :file: doc/control_panel_view_rois.csv
     :widths: 1, 4
 
 
