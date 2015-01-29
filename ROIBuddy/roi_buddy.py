@@ -14,6 +14,7 @@ from shapely.geometry import MultiPolygon, Polygon
 from skimage import transform as tf
 import itertools as it
 from random import shuffle
+import warnings as wa
 
 from roiBuddyUI import Ui_ROI_Buddy
 from importROIsWidget import Ui_importROIsWidget
@@ -37,7 +38,6 @@ from guiqwt.shapes import PolygonShape, EllipseShape
 from guiqwt.events import setup_standard_tool_filter, PanHandler
 from guiqwt.image import ImageItem
 
-from pudb import set_trace
 
 icon_filepath = \
     './icons/'
@@ -52,6 +52,7 @@ def debug_trace():
     '''Set a tracepoint in the Python debugger that works with Qt'''
 
     from PyQt4.QtCore import pyqtRemoveInputHook
+    from pudb import set_trace
     pyqtRemoveInputHook()
     set_trace()
 
@@ -134,7 +135,7 @@ class PanTool(InteractiveTool):
 
 
 class EllipseTool(RectangularShapeTool):
-    #TODO: Modify this such that it draws like an ImageJ ellipse?
+    # TODO: Modify this such that it draws like an ImageJ ellipse?
 
     TITLE = "Ellipse"
     ICON = "ellipse_shape.png"
@@ -156,20 +157,20 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         Initialize the application
         """
 
-        #initialize the UI and parent class
+        # initialize the UI and parent class
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setWindowTitle('ROI Buddy')
 
-        #define actions for menu bar and ROI manager
+        # define actions for menu bar and ROI manager
         self.define_actions()
 
         self.create_menu()
-        #self.create_status_bar()
+        # self.create_status_bar()
 
         self.viewer = self.initialize_display_window()
 
-        #filter for Esc button behavior
+        # filter for Esc button behavior
         self.viewer.keyPressEvent = self.viewer_keyPressEvent
         self.viewer.wheelEvent = self.viewer_wheelEvent
         self.viewer.add_tool(PanTool)
@@ -180,15 +181,15 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
         self.connectSignals()
 
-        #initialize base image
+        # initialize base image
         self.base_im = None
 
-        #initialize the mode
+        # initialize the mode
         self.mode = 'edit'
 
         self.colors_dict = {}
 
-        #deactivate buttons until a t-series is added
+        # deactivate buttons until a t-series is added
         self.toggle_button_state(False)
 
         self.toggle_button_state(True)
@@ -238,7 +239,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         self.statusBar().addWidget(QLabel(""), 1)
 
     def define_actions(self):
-        #File menu actions
+        # File menu actions
         self.quit_action = qthelpers.create_action(
             self, "&Quit", triggered=self.close, shortcut="Ctrl+Q",
             tip="Close ROI Buddy")
@@ -597,7 +598,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
             active_tSeries.show()
 
-            #preserve the zoom and aspect ratio
+            # Preserve the zoom and aspect ratio
             self.plot.set_axis_limits(0, y_lims[0], y_lims[1])
             self.plot.set_axis_limits(2, x_lims[0], x_lims[1])
 
@@ -627,7 +628,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             y_lims = [x - self.base_im.data.shape[0] for x in y_lims]
             x_lims = [x - self.base_im.data.shape[1] for x in x_lims]
 
-            #preserve the zoom and aspect ratio
+            # Preserve the zoom and aspect ratio
             self.plot.set_axis_limits(0, y_lims[0], y_lims[1])
             self.plot.set_axis_limits(2, x_lims[0], x_lims[1])
 
@@ -647,8 +648,14 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         if sima_path is not '':
             if not self.tSeries_list.count():
                 self.toggle_button_state(True)
-            tSeries = UI_tSeries(sima_path, parent=self)
-            self.tSeries_list.setCurrentItem(tSeries)
+            try:
+                tSeries = UI_tSeries(sima_path, parent=self)
+            except IOError:
+                print('Invalid path, skipping: ' + sima_path)
+                if not self.tSeries_list.count():
+                    self.toggle_button_state(False)
+            else:
+                self.tSeries_list.setCurrentItem(tSeries)
 
     def add_tseries_by_tag(self):
         """Select a root folder, then recursively search all subdirectories for
@@ -676,8 +683,8 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                             paths.append(join(root, directory))
 
                 paths.sort()
-                for path in paths:
-                    UI_tSeries(path, parent=self)
+                for p in paths:
+                    UI_tSeries(p, parent=self)
 
                 if self.tSeries_list.count():
                     self.toggle_button_state(True)
@@ -697,7 +704,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             try:
                 self.plot.del_item(self.base_im)
             except AttributeError:
-                #base_im has already been deleted
+                # base_im has already been deleted
                 pass
             self.toggle_button_state(False)
             self.plot.replot()
@@ -956,7 +963,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
         active_tSeries = self.tSeries_list.currentItem()
 
-        #TODO: this is arbitrary -- either give warning or just fail
+        # TODO: this is arbitrary -- either give warning or just fail
         roi = self.plot.get_selected_items()[0]
         rois = active_tSeries.update_rois([roi])
         if not len(rois):
@@ -970,7 +977,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         #         return
         #     active_tSeries.update_rois()
 
-        #TODO: is this check necessary?
+        # TODO: is this check necessary?
         if roi is not None:
 
             tags_str = ''
@@ -981,7 +988,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 self, 'Edit tags', 'Enter the list of comma-separated tags:',
                 QLineEdit.Normal, tags_str)
             split_tags = [str(x).strip() for x in new_tags.split(',')]
-            #TODO: ADD VALIDATOR!
+            # TODO: ADD VALIDATOR!
 
             polys_to_edit = [r for r in active_tSeries.roi_list
                              if r.label == roi.label]
@@ -1067,7 +1074,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             active_tSeries.update_rois()
 
         if self.mode is 'align':
-            #Note: if roi2 is part of a cluster, it is essentially removed
+            # NOTE: if roi2 is part of a cluster, it is essentially removed
             # from that and added to the cluster of roi1 (it also gets the
             # tags from cluster 1)
 
@@ -1105,7 +1112,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 parent = roi2
                 child = roi1
 
-            #in align mode can't merge two from the same t-series
+            # in align mode can't merge two from the same t-series
             if child.parent == parent.parent:
                 QMessageBox.warning(self,
                                     'Invalid Merge',
@@ -1114,7 +1121,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                                     QMessageBox.Ok)
                 return
 
-            #if the parent's ID is already present in the child's set
+            # if the parent's ID is already present in the child's set
             if parent.id is not None and parent.id in [r.id for r in
                                                        child.parent.roi_list]:
                 QMessageBox.warning(self,
@@ -1331,7 +1338,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         tSeries_list = [self.tSeries_list.item(i) for i in
                         range(self.tSeries_list.count())]
 
-        #launch roi_lock popup
+        # launch roi_lock popup
         self.roi_lock_popup = lockROIsWidget(self, tSeries_list)
         if not self.roi_lock_popup.exec_():
             return
@@ -1549,10 +1556,12 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
 class UI_tSeries(QListWidgetItem):
     def __init__(self, sima_path, parent):
+        # Try to load the dataset first, if it fails, don't add it to the panel
+        self.dataset = ImagingDataset.load(sima_path)
+        
         QListWidgetItem.__init__(
             self, QString(dirname(sima_path)), parent=parent.tSeries_list)
 
-        self.dataset = ImagingDataset.load(sima_path)
         self.parent = parent
 
         self.num_planes = self.dataset.frame_shape[0]
@@ -1565,9 +1574,11 @@ class UI_tSeries(QListWidgetItem):
         # Lock ROI ids
         self.roi_id_lock = False
 
-        self.roi_sets = self.dataset.ROIs.keys()
+        rois = self.dataset.ROIs
+
+        self.roi_sets = rois.keys()
         try:
-            self.active_rois = sima.misc.most_recent_key(self.dataset.ROIs)
+            self.active_rois = sima.misc.most_recent_key(rois)
         except ValueError:
             new_set = datetime.strftime(datetime.now(), '%Y-%m-%d-%Hh%Mm%Ss')
             self.active_rois = new_set
@@ -1575,7 +1586,7 @@ class UI_tSeries(QListWidgetItem):
 
         # self.transforms is a dictionary of affine transformations.
         # Keys are other UI_tSeries objects
-        #TODO: skimage.Transform objects
+        # TODO: skimage.Transform objects
         self.transforms = {}
 
         self.initialize_base_images()
@@ -1594,7 +1605,7 @@ class UI_tSeries(QListWidgetItem):
         try:
             self.parent.plot.del_item(self.parent.base_im)
         except AttributeError:
-            #base_im has already been deleted
+            # base_im has already been deleted
             pass
         except ValueError:
             self.parent.base_im = None
@@ -1748,7 +1759,7 @@ class UI_tSeries(QListWidgetItem):
                         src_coords, trg_coords, 'piecewise-affine')
                     translation = tf.AffineTransform(
                         translation=target_tSeries.shape[::-1])
-                    #translate into same space
+                    # translate into same space
                     for tri in range(len(transform.affines)):
                         transform.affines[tri] += translation
                     self.transforms[target_tSeries].append(transform)
@@ -1761,7 +1772,7 @@ class UI_tSeries(QListWidgetItem):
 
                     transform = estimate_array_transform(
                         ref, target, method='affine')
-                    #translate into same space
+                    # translate into same space
                     transform += tf.AffineTransform(
                         translation=target_tSeries.shape[::-1])
                     self.transforms[target_tSeries].append(transform)
@@ -1929,8 +1940,6 @@ class UI_tSeries(QListWidgetItem):
                             label=rois_by_label[label]['label']))
 
         self.dataset.add_ROIs(ROIs, label=roi_set_name)
-        # ROIs.save(path=join(self.dataset.savedir, 'rois.pkl'),
-        #           label=roi_set_name)
 
 
 class UI_ROI(PolygonShape, ROI):
