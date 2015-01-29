@@ -29,6 +29,10 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from guidata import qthelpers
+
+import guiqwt.baseplot
+import guiqwt_patch
+guiqwt.baseplot.BasePlot.add_item_with_z_offset = guiqwt_patch.add_item_with_z_offset
 from guiqwt.plot import ImageDialog
 from guiqwt.tools import FreeFormTool, InteractiveTool, \
     RectangleTool, RectangularShapeTool, SelectTool
