@@ -18,7 +18,7 @@ cells in serial imaging experiments.
 Documentation
 =============
 
-Documentation is available at http://www.losonczylab.org/sima/roi_buddy.
+Documentation is available at http://www.losonczylab.org/sima/roi_buddy.html.
 
 License
 =======
