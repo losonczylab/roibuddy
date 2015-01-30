@@ -16,7 +16,7 @@ cells in serial imaging experiments.
    :align:  center
 
 Documentation
--------------
+=============
 
 Documentation is available at http://www.losonczylab.org/sima/roi_buddy.
 
