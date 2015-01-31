@@ -2,7 +2,7 @@
 import os
 import sys
 from sys import path
-path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+# path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 from os.path import join, dirname, isdir
 
 import numpy as np
@@ -11,6 +11,7 @@ from scipy.spatial import ConvexHull
 from scipy.cluster.hierarchy import average, fcluster
 from scipy.stats import mode
 from shapely.geometry import MultiPolygon, Polygon
+from shapely.topology import TopologicalError
 from skimage import transform as tf
 import itertools as it
 from random import shuffle
@@ -91,7 +92,12 @@ def jaccard_index(roi1, roi2):
                     co_planar_polys2.append(p)
             p2 = MultiPolygon(co_planar_polys2)
 
-            union += p1.union(p2).area
+            try:
+                union += p1.union(p2).area
+            except TopologicalError:
+                p1 = p1.buffer(0)
+                p2 = p2.buffer(0)
+                union += p1.union(p2).area
             intersection += p1.intersection(p2).area
 
             for p in co_planar_polys1[::-1]:
@@ -1744,18 +1750,21 @@ class UI_tSeries(QListWidgetItem):
                                     for p1, p2 in zip(points1, points2)]))
                     trg_coords = np.roll(
                         trg_coords, np.argmin(mean_dists), axis=0)
-                    src_coords = np.vstack(
-                        (src_coords, [[0, 0], [0,
-                                      self.dataset.frame_shape[1]],
-                                      [self.dataset.frame_shape[2], 0],
-                                      [self.dataset.frame_shape[2],
-                                       self.dataset.frame_shape[1]]]))
-                    trg_coords = np.vstack(
-                        (trg_coords,
-                         [[0, 0], [0, target_tSeries.dataset.frame_shape[1]],
-                          [target_tSeries.dataset.frame_shape[2], 0],
-                          [target_tSeries.dataset.frame_shape[2],
-                           target_tSeries.dataset.frame_shape[1]]]))
+
+                    whole_frame_transform = estimate_coordinate_transform(
+                        src_coords, trg_coords, 'affine')
+
+                    src_additional_coords = [
+                        [-50, -50],
+                        [-50, self.dataset.frame_shape[1] + 50],
+                        [self.dataset.frame_shape[2] + 50, -50],
+                        [self.dataset.frame_shape[2] + 50,
+                         self.dataset.frame_shape[1] + 50]]
+                    trg_additional_coords = whole_frame_transform(
+                        src_additional_coords)
+
+                    src_coords = np.vstack((src_coords, src_additional_coords))
+                    trg_coords = np.vstack((trg_coords, trg_additional_coords))
 
                     transform = estimate_coordinate_transform(
                         src_coords, trg_coords, 'piecewise-affine')
