@@ -42,8 +42,7 @@ from guiqwt.shapes import PolygonShape, EllipseShape
 from guiqwt.events import setup_standard_tool_filter, PanHandler
 from guiqwt.image import ImageItem
 
-
-icon_filepath = '../icons/'
+icon_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'icons')
 
 if isdir('/data/'):
     data_path = '/data/'
@@ -264,7 +263,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             self, "&Save current ROIs",
             triggered=lambda: self.save([self.tSeries_list.currentItem()]),
             shortcut="Ctrl+S",
-            icon=QIcon(QString(icon_filepath + "document-save-5.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath,"document-save-5.png"))),
             tip="Save the current ROI set to file.")
 
         self.save_all_action = qthelpers.create_action(
@@ -272,44 +271,44 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             triggered=lambda: self.save(
                 [self.tSeries_list.item(i) for i in range(
                     self.tSeries_list.count())]),
-            icon=QIcon(QString(icon_filepath + "document-save-all.png")
+            icon=QIcon(QString(os.path.join(icon_filepath, "document-save-all.png"))
                        ), tip="Save all ROI sets with the same label")
 
         # #ROI Manager actions
         self.delete_action = qthelpers.create_action(
             self, "&Delete ROI", triggered=self.delete, shortcut="Del",
-            icon=QIcon(QString(icon_filepath + "edit-delete-2.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "edit-delete-2.png"))),
             tip="Remove the selected ROIs")
         self.delete_action.setShortcuts(["D", "Del", "Backspace"])
 
         self.edit_label_action = qthelpers.create_action(
             self, "&Edit Label", triggered=self.edit_label,
-            icon=QIcon(QString(icon_filepath + "document-sign.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "document-sign.png"))),
             tip="Edit the ROI 'label' attribute")
 
         self.add_tags_action = qthelpers.create_action(
             self, "&Add Tags", triggered=self.add_tags, shortcut="T",
-            icon=QIcon(QString(icon_filepath + "flag-green.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "flag-green.png"))),
             tip="Add tags to the selected ROIs")
 
         self.clear_tags_action = qthelpers.create_action(
             self, "&Remove Tags", triggered=self.clear_tags, shortcut="C",
-            icon=QIcon(QString(icon_filepath + "flag-red.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "flag-red.png"))),
             tip="Remove tags from the selected ROIs")
 
         self.edit_tags_action = qthelpers.create_action(
             self, "&Edit Tags", triggered=self.edit_tags,
-            icon=QIcon(QString(icon_filepath + "edit.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "edit.png"))),
             tip="Edit tags for the selected ROI")
 
         self.merge_rois = qthelpers.create_action(
             self, "&Merge", triggered=self.merge_ROIs, shortcut="M",
-            icon=QIcon(QString(icon_filepath + "insert-link.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "insert-link.png"))),
             tip="Merge ROIs")
 
         self.unmerge_rois = qthelpers.create_action(
             self, "&Unmerge", triggered=self.unmerge_ROIs, shortcut="U",
-            icon=QIcon(QString(icon_filepath + "edit-cut.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "edit-cut.png"))),
             tip="Unmerge an ROI")
 
         self.edit_roi_action = qthelpers.create_action(
@@ -319,7 +318,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
         self.randomize_colors_action = qthelpers.create_action(
             self, "&Randomize", triggered=self.randomize_colors, shortcut="R",
-            icon=QIcon(QString(icon_filepath + "colorize.png")),
+            icon=QIcon(QString(os.path.join(icon_filepath, "colorize.png"))),
             tip="Randomize ROI colors")
 
         self.activate_freeform_tool_action = qthelpers.create_action(
