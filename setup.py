@@ -27,7 +27,7 @@ setup(
         'roibuddy': [
             'icons/*'
         ]
-    }
+    },
     author="The SIMA Development Team",
     author_email="software@losonczylab.org",
     description="GUI for editing segmentations when using SIMA",
