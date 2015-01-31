@@ -15,7 +15,7 @@ Topic :: Scientific/Engineering
 
 setup(
     name='roibuddy',
-    version='1.0.0-dev',
+    version='1.0.0',
     packages=['roibuddy'],
     entry_points={'gui_scripts': ['roibuddy = roibuddy.roi_buddy:main']},
     install_requires=[
