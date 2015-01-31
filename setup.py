@@ -23,6 +23,11 @@ setup(
         'guiqwt>=2.1.6',
         'guidata>=1.4.1',
     ],
+    package_data={
+        'roibuddy': [
+            'icons/*'
+        ]
+    }
     author="The SIMA Development Team",
     author_email="software@losonczylab.org",
     description="GUI for editing segmentations when using SIMA",
