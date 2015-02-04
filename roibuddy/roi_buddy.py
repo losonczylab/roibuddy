@@ -1732,12 +1732,14 @@ class UI_tSeries(QListWidgetItem):
                 for plane in xrange(self.num_planes):
                     for roi in target_tSeries.dataset.ROIs[ANCHORS]:
                         if roi.coords[0][0, 2] == plane:
-                            trg_coords = roi.coords[0][:, :2]
+                            # Coords is a closed polygon, so the last coord and
+                            # the first coord are identical, remove one copy
+                            trg_coords = roi.coords[0][:-1, :2]
                         else:
                             pass
                     for roi in self.dataset.ROIs[ANCHORS]:
                         if roi.coords[0][0, 2] == plane:
-                            src_coords = roi.coords[0][:, :2]
+                            src_coords = roi.coords[0][:-1, :2]
                     assert len(src_coords) == len(trg_coords)
 
                     mean_dists = []
