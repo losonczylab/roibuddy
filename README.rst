@@ -1,13 +1,13 @@
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/losonczylab/roibuddy
+   :target: https://gitter.im/losonczylab/roibuddy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 *************
 ROI Buddy GUI
 *************
 
 Introduction
 ============
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/losonczylab/roibuddy
-   :target: https://gitter.im/losonczylab/roibuddy?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
 The ROI Buddy GUI can be used for viewing, creating, editing, and tagging the
 regions of interest (ROIs) associated with multiple SIMA imaging datasets
