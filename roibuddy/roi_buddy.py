@@ -212,16 +212,17 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
     def viewer_wheelEvent(self, event):
         """Capture scroll events to toggle the base image z-plane"""
-        active_tSeries = self.tSeries_list.currentItem()
-        delta = event.delta()
-        if delta < 0:
-            if active_tSeries.active_plane + 1 >= active_tSeries.num_planes:
-                return
-            self.plane_index_box.setValue(active_tSeries.active_plane + 1)
-        else:
-            if active_tSeries.active_plane - 1 < 0:
-                return
-            self.plane_index_box.setValue(active_tSeries.active_plane - 1)
+        pass
+        # active_tSeries = self.tSeries_list.currentItem()
+        # delta = event.delta()
+        # if delta < 0:
+        #     if active_tSeries.active_plane + 1 >= active_tSeries.num_planes:
+        #         return
+        #     self.plane_index_box.setValue(active_tSeries.active_plane + 1)
+        # else:
+        #     if active_tSeries.active_plane - 1 < 0:
+        #         return
+        #     self.plane_index_box.setValue(active_tSeries.active_plane - 1)
 
     def create_menu(self):
         self.file_menu = self.menuBar().addMenu("&File")
@@ -1716,30 +1717,31 @@ class UI_tSeries(QListWidgetItem):
                 target_tSeries.dataset.channel_names.index(
                     target_tSeries.active_channel)
 
-            self.transforms[target_tSeries] = []
+            ANCHORS = '_REGISTRATION_ANCHORS'
 
-            if '_REGISTRATION_ANCHORS' in self.dataset.ROIs and \
-                    '_REGISTRATION_ANCHORS' in target_tSeries.dataset.ROIs:
-
-                ANCHORS = '_REGISTRATION_ANCHORS'
-
-                assert len(
-                    self.dataset.ROIs[ANCHORS]) == \
-                    self.dataset.frame_shape[0]
-                assert len(
-                    target_tSeries.dataset.ROIs[ANCHORS]) == \
-                    target_tSeries.dataset.frame_shape[0]
+            if ANCHORS in self.dataset.ROIs and \
+                    ANCHORS in target_tSeries.dataset.ROIs:
+                transforms = []
                 for plane in xrange(self.num_planes):
+                    trg_coords = None
                     for roi in target_tSeries.dataset.ROIs[ANCHORS]:
                         if roi.coords[0][0, 2] == plane:
                             # Coords is a closed polygon, so the last coord and
                             # the first coord are identical, remove one copy
                             trg_coords = roi.coords[0][:-1, :2]
-                        else:
-                            pass
+                            break
+                    if trg_coords is None:
+                        transforms.append(None)
+                        break
+
+                    src_coords = None
                     for roi in self.dataset.ROIs[ANCHORS]:
                         if roi.coords[0][0, 2] == plane:
                             src_coords = roi.coords[0][:-1, :2]
+                            break
+                    if src_coords is None:
+                        transforms.append(None)
+                        break
                     assert len(src_coords) == len(trg_coords)
 
                     mean_dists = []
@@ -1774,8 +1776,20 @@ class UI_tSeries(QListWidgetItem):
                     # translate into same space
                     for tri in range(len(transform.affines)):
                         transform.affines[tri] += translation
-                    self.transforms[target_tSeries].append(transform)
+                    transforms.append(transform)
+                    # self.transforms[target_tSeries].append(transform)
+                assert not all([transform is None for transform in transforms])
+                # If any planes were missing an anchor set, copy transforms from
+                # adjacent planes
+                for idx in range(len(transforms) - 1):
+                    if transforms[idx + 1] is None:
+                        transforms[idx + 1] = transforms[idx]
+                for idx in reversed(range(len(transforms) - 1)):
+                    if transforms[idx] is None:
+                        transforms[idx] = transforms[idx + 1]
+                self.transforms[target_tSeries] = transforms
             else:
+                self.transforms[target_tSeries] = []
                 for plane in xrange(self.num_planes):
                     ref = self.dataset.time_averages[
                         plane, :, :, ref_active_channel]
