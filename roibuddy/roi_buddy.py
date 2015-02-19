@@ -1787,14 +1787,14 @@ class UI_tSeries(QListWidgetItem):
                 if any(transform_check):
                     wa.warn("Z-plane missing transform. Copying from adjacet" +
                             " plane, accuracy not guaranteed")
-                # If any planes were missing an anchor set, copy transforms
-                # from adjacent planes
-                for idx in range(len(transforms) - 1):
-                    if transforms[idx + 1] is None:
-                        transforms[idx + 1] = transforms[idx]
-                for idx in reversed(range(len(transforms) - 1)):
-                    if transforms[idx] is None:
-                        transforms[idx] = transforms[idx + 1]
+                    # If any planes were missing an anchor set, copy transforms
+                    # from adjacent planes
+                    for idx in range(len(transforms) - 1):
+                        if transforms[idx + 1] is None:
+                            transforms[idx + 1] = transforms[idx]
+                    for idx in reversed(range(len(transforms) - 1)):
+                        if transforms[idx] is None:
+                            transforms[idx] = transforms[idx + 1]
                 self.transforms[target_tSeries] = transforms
             else:
                 self.transforms[target_tSeries] = []
