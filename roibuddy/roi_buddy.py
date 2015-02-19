@@ -1,8 +1,6 @@
 #! python
 import os
 import sys
-from sys import path
-# path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 from os.path import join, dirname, isdir
 
 import numpy as np
@@ -15,6 +13,7 @@ from shapely.topology import TopologicalError
 from skimage import transform as tf
 import itertools as it
 from random import shuffle
+import warnings as wa
 
 from roiBuddyUI import Ui_ROI_Buddy
 from importROIsWidget import Ui_importROIsWidget
@@ -48,6 +47,9 @@ if isdir('/data/'):
     data_path = '/data/'
 else:
     data_path = ''
+
+# TODO: move this in to an option somewhere in the GUI
+ENABLE_MOUSE_WHEEL_Z_SCROLL = True
 
 
 def debug_trace():
@@ -212,17 +214,18 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
     def viewer_wheelEvent(self, event):
         """Capture scroll events to toggle the base image z-plane"""
-        pass
-        # active_tSeries = self.tSeries_list.currentItem()
-        # delta = event.delta()
-        # if delta < 0:
-        #     if active_tSeries.active_plane + 1 >= active_tSeries.num_planes:
-        #         return
-        #     self.plane_index_box.setValue(active_tSeries.active_plane + 1)
-        # else:
-        #     if active_tSeries.active_plane - 1 < 0:
-        #         return
-        #     self.plane_index_box.setValue(active_tSeries.active_plane - 1)
+        if ENABLE_MOUSE_WHEEL_Z_SCROLL:
+            active_tSeries = self.tSeries_list.currentItem()
+            delta = event.delta()
+            if delta < 0:
+                if active_tSeries.active_plane + 1 \
+                        >= active_tSeries.num_planes:
+                    return
+                self.plane_index_box.setValue(active_tSeries.active_plane + 1)
+            else:
+                if active_tSeries.active_plane - 1 < 0:
+                    return
+                self.plane_index_box.setValue(active_tSeries.active_plane - 1)
 
     def create_menu(self):
         self.file_menu = self.menuBar().addMenu("&File")
@@ -1777,10 +1780,15 @@ class UI_tSeries(QListWidgetItem):
                     for tri in range(len(transform.affines)):
                         transform.affines[tri] += translation
                     transforms.append(transform)
-                    # self.transforms[target_tSeries].append(transform)
-                assert not all([transform is None for transform in transforms])
-                # If any planes were missing an anchor set, copy transforms from
-                # adjacent planes
+
+                transform_check = [t is None for t in transforms]
+                assert not all(transform_check)
+
+                if any(transform_check):
+                    wa.warn("Z-plane missing transform. Copying from adjacet" +
+                            " plane, accuracy not guaranteed")
+                # If any planes were missing an anchor set, copy transforms
+                # from adjacent planes
                 for idx in range(len(transforms) - 1):
                     if transforms[idx + 1] is None:
                         transforms[idx + 1] = transforms[idx]
