@@ -196,6 +196,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # initialize the mode
         self.mode = 'edit'
 
+        self.color_mode = 'tags'
         self.colors_dict = {}
 
         # deactivate buttons until a t-series is added
@@ -942,6 +943,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                     for tag in tags_list:
                         poly.tags.add(tag)
                     poly.update_name()
+                    poly.update_color()
 
     def clear_tags(self):
         """
@@ -965,6 +967,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             for poly in polys_to_clear:
                 poly.tags = None
                 poly.update_name()
+                poly.update_color()
 
     def edit_tags(self):
         """
@@ -1008,6 +1011,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 for poly in polys_to_edit:
                     poly.tags = split_tags
                     poly.update_name()
+                    poly.update_color()
 
     def merge_ROIs(self):
         """
@@ -1990,6 +1994,12 @@ class UI_ROI(PolygonShape, ROI):
         self.initialize_style()
         self.update_name()
 
+    def _tags_str(self):
+        tags_str = ''
+        for tag in self.tags:
+            tags_str += tag + ', '
+        return tags_str.rstrip(', ')
+
     @staticmethod
     def convert_polygon(polygon, parent):
         """Takes a polygon and returns a similar UI_ROI object."""
@@ -2026,26 +2036,36 @@ class UI_ROI(PolygonShape, ROI):
 
         """
 
-        if self.id is None:
-            if self.label is None:
-                color = random_color()
-            elif self.label in self.parent.parent.colors_dict:
-                color = self.parent.parent.colors_dict[self.label]
+        color_mode = self.parent.parent.color_mode
+
+        if color_mode == 'id':
+            if self.id is None:
+                if self.label is None:
+                    color = random_color()
+                elif self.label in self.parent.parent.colors_dict:
+                    color = self.parent.parent.colors_dict[self.label]
+                else:
+                    color = random_color()
+                    self.parent.parent.colors_dict[self.label] = color
+            elif self.id in self.parent.parent.colors_dict:
+                color = self.parent.parent.colors_dict[self.id]
             else:
                 color = random_color()
-                self.parent.parent.colors_dict[self.label] = color
-        elif self.id in self.parent.parent.colors_dict:
-            color = self.parent.parent.colors_dict[self.id]
+                self.parent.parent.colors_dict[self.id] = color
+        elif color_mode == 'tags':
+            tags_str = self._tags_str()
+            if tags_str in self.parent.parent.colors_dict:
+                color = self.parent.parent.colors_dict[tags_str]
+            else:
+                color = random_color()
+                self.parent.parent.colors_dict[tags_str] = color
         else:
-            color = random_color()
-            self.parent.parent.colors_dict[self.id] = color
+            raise ValueError
         self.pen.setColor(color)
 
     def update_name(self):
-        name = self.label + ':' if self.label is not None else ':'
-        for tag in self.tags:
-            name += ' ' + tag + ','
-        name = name.rstrip(',')
+        name = self.label + ': ' if self.label is not None else ': '
+        name += self._tags_str()
         self.setTitle(name)
 
     def update_points(self):
