@@ -2058,7 +2058,10 @@ class UI_ROI(PolygonShape, ROI):
         """Updates the color of the ROI from the colors_dict or a new
         random color
 
-        ROIs are colored first by id, then by label, then randomly
+        If colorby_mode is 'id', ROIs are colored first by id, then by label,
+            then randomly.
+        If colorby_mode is 'tags', ROIs with the same set of tags will be
+            given the same color.
 
         """
 
