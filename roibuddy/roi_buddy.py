@@ -196,7 +196,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # initialize the mode
         self.mode = 'edit'
 
-        self.color_mode = 'tags'
+        self.color_mode = 'id'
         self.colors_dict = {}
 
         # deactivate buttons until a t-series is added
@@ -372,6 +372,9 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # show/hide ROIs
         self.show_ROIs_checkbox.stateChanged.connect(self.toggle_show_rois)
         self.show_all_checkbox.stateChanged.connect(self.toggle_show_all)
+
+        # toggle color mode
+        self.colorbyMode.buttonClicked.connect(self.toggle_colorby)
 
         # save ROIs buttons
         self.save_current_rois_button.clicked.connect(
@@ -1305,6 +1308,29 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         else:
             self.hide_rois(show_in_list=self.mode == 'edit')
             self.show_rois(active_tSeries, show_in_list=self.mode == 'edit')
+        self.plot.replot()
+
+    def toggle_colorby(self, button):
+
+        update_color = False
+        if button is self.colorbyid_radioButton and self.mode == 'tags':
+            # Toggle to colorby id
+            self.mode = 'id'
+            update_color = True
+
+        if button is self.colorbytags_radioButton and self.mode == 'id':
+            # Togle to colorby tags
+            self.mode = 'tags'
+            update_color = True
+
+        if update_color:
+            tSeries_list = [self.tSeries_list.item(i)
+                            for i in range(self.tSeries_list.count())]
+            for tSeries in tSeries_list:
+                for roi in tSeries.roi_list:
+                    roi.update_color()
+
+        self.plot.unselect_all()
         self.plot.replot()
 
     def save(self, tSeries_list):
