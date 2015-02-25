@@ -196,7 +196,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # initialize the mode
         self.mode = 'edit'
 
-        self.color_mode = 'id'
+        self.colorby_mode = 'id'
         self.colors_dict = {}
 
         # deactivate buttons until a t-series is added
@@ -1313,14 +1313,14 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
     def toggle_colorby(self, button):
 
         update_color = False
-        if button is self.colorbyid_radioButton and self.mode == 'tags':
+        if button is self.colorbyid_radioButton and self.colorby_mode == 'tags':
             # Toggle to colorby id
-            self.mode = 'id'
+            self.colorby_mode = 'id'
             update_color = True
 
-        if button is self.colorbytags_radioButton and self.mode == 'id':
+        if button is self.colorbytags_radioButton and self.colorby_mode == 'id':
             # Togle to colorby tags
-            self.mode = 'tags'
+            self.colorby_mode = 'tags'
             update_color = True
 
         if update_color:
@@ -2062,9 +2062,7 @@ class UI_ROI(PolygonShape, ROI):
 
         """
 
-        color_mode = self.parent.parent.color_mode
-
-        if color_mode == 'id':
+        if self.parent.parent.colorby_mode == 'id':
             if self.id is None:
                 if self.label is None:
                     color = random_color()
@@ -2078,7 +2076,7 @@ class UI_ROI(PolygonShape, ROI):
             else:
                 color = random_color()
                 self.parent.parent.colors_dict[self.id] = color
-        elif color_mode == 'tags':
+        elif self.parent.parent.colorby_mode == 'tags':
             tags_str = self._tags_str()
             if tags_str in self.parent.parent.colors_dict:
                 color = self.parent.parent.colors_dict[tags_str]
