@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'roiBuddyUI.ui'
 #
-# Created: Wed Feb 25 00:40:11 2015
+# Created: Wed Feb 25 00:43:45 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,7 +40,7 @@ class Ui_ROI_Buddy(object):
         self.lookupTableFrame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.lookupTableFrame.setFrameShadow(QtGui.QFrame.Raised)
         self.lookupTableFrame.setObjectName(_fromUtf8("lookupTableFrame"))
-        self.gridLayout.addWidget(self.lookupTableFrame, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.lookupTableFrame, 4, 1, 1, 1)
         self.channelSelectionFrame = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
@@ -85,7 +85,7 @@ class Ui_ROI_Buddy(object):
         self.processed_checkbox.setSizePolicy(sizePolicy)
         self.processed_checkbox.setObjectName(_fromUtf8("processed_checkbox"))
         self.horizontalLayout.addWidget(self.processed_checkbox)
-        self.gridLayout.addWidget(self.channelSelectionFrame, 4, 1, 1, 1)
+        self.gridLayout.addWidget(self.channelSelectionFrame, 5, 1, 1, 1)
         self.displayFrame = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(3)
@@ -97,7 +97,7 @@ class Ui_ROI_Buddy(object):
         self.displayFrame.setObjectName(_fromUtf8("displayFrame"))
         self.gridLayout_3 = QtGui.QGridLayout(self.displayFrame)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.gridLayout.addWidget(self.displayFrame, 0, 0, 5, 1)
+        self.gridLayout.addWidget(self.displayFrame, 0, 0, 6, 1)
         self.tSeriesListFrame = QtGui.QFrame(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -240,7 +240,7 @@ class Ui_ROI_Buddy(object):
         self.itemListFrame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.itemListFrame.setFrameShadow(QtGui.QFrame.Raised)
         self.itemListFrame.setObjectName(_fromUtf8("itemListFrame"))
-        self.gridLayout.addWidget(self.itemListFrame, 1, 1, 2, 1)
+        self.gridLayout.addWidget(self.itemListFrame, 3, 1, 1, 1)
         ROI_Buddy.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ROI_Buddy)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 22))
