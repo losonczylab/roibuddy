@@ -344,6 +344,26 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="1">
+        <widget class="QWidget" name="widget_2" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QCheckBox" name="colorbyid_checkbox">
+            <property name="text">
+             <string>color by ID</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="colorbytags_checkbox">
+            <property name="text">
+             <string>color by tags</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

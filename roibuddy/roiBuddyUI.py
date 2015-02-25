@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ROI_BuddyUI/roiBuddyUI.ui'
+# Form implementation generated from reading ui file 'roiBuddyUI.ui'
 #
-# Created: Mon Oct 13 22:29:59 2014
-#      by: PyQt4 UI code generator 4.9.3
+# Created: Tue Feb 24 23:14:56 2015
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,16 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    _fromUtf8 = lambda s: s
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_ROI_Buddy(object):
     def setupUi(self, ROI_Buddy):
@@ -162,10 +171,10 @@ class Ui_ROI_Buddy(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.remove_tseries_button = QtGui.QPushButton(self.widget)
         self.remove_tseries_button.setObjectName(_fromUtf8("remove_tseries_button"))
-        self.horizontalLayout_2.addWidget(self.remove_tseries_button)
+        self.horizontalLayout_2.addWidget(self.remove_tseries_button, QtCore.Qt.AlignLeft)
         self.add_tseries_button = QtGui.QPushButton(self.widget)
         self.add_tseries_button.setObjectName(_fromUtf8("add_tseries_button"))
-        self.horizontalLayout_2.addWidget(self.add_tseries_button)
+        self.horizontalLayout_2.addWidget(self.add_tseries_button, QtCore.Qt.AlignRight)
         self.gridLayout_2.addWidget(self.widget, 2, 2, 1, 1)
         self.save_rois_widget = QtGui.QWidget(self.tSeriesListFrame)
         self.save_rois_widget.setObjectName(_fromUtf8("save_rois_widget"))
@@ -190,16 +199,16 @@ class Ui_ROI_Buddy(object):
         self.modeSelection = QtGui.QButtonGroup(ROI_Buddy)
         self.modeSelection.setObjectName(_fromUtf8("modeSelection"))
         self.modeSelection.addButton(self.edit_mode_radiobutton)
-        self.horizontalLayout_3.addWidget(self.edit_mode_radiobutton)
+        self.horizontalLayout_3.addWidget(self.edit_mode_radiobutton, QtCore.Qt.AlignLeft)
         self.align_mode_radiobutton = QtGui.QRadioButton(self.mode_selection_widget)
         self.align_mode_radiobutton.setObjectName(_fromUtf8("align_mode_radiobutton"))
         self.modeSelection.addButton(self.align_mode_radiobutton)
-        self.horizontalLayout_3.addWidget(self.align_mode_radiobutton)
+        self.horizontalLayout_3.addWidget(self.align_mode_radiobutton, QtCore.Qt.AlignHCenter)
         self.register_rois_button = QtGui.QPushButton(self.mode_selection_widget)
         self.register_rois_button.setEnabled(False)
         self.register_rois_button.setCheckable(False)
         self.register_rois_button.setObjectName(_fromUtf8("register_rois_button"))
-        self.horizontalLayout_3.addWidget(self.register_rois_button)
+        self.horizontalLayout_3.addWidget(self.register_rois_button, QtCore.Qt.AlignRight)
         self.propagate_tags_button = QtGui.QPushButton(self.mode_selection_widget)
         self.propagate_tags_button.setEnabled(False)
         self.propagate_tags_button.setObjectName(_fromUtf8("propagate_tags_button"))
@@ -215,6 +224,18 @@ class Ui_ROI_Buddy(object):
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout_2.addWidget(self.line, 3, 0, 1, 3)
+        self.widget_2 = QtGui.QWidget(self.tSeriesListFrame)
+        self.widget_2.setObjectName(_fromUtf8("widget_2"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.widget_2)
+        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.colorbyid_checkbox = QtGui.QCheckBox(self.widget_2)
+        self.colorbyid_checkbox.setObjectName(_fromUtf8("colorbyid_checkbox"))
+        self.verticalLayout.addWidget(self.colorbyid_checkbox)
+        self.colorbytags_checkbox = QtGui.QCheckBox(self.widget_2)
+        self.colorbytags_checkbox.setObjectName(_fromUtf8("colorbytags_checkbox"))
+        self.verticalLayout.addWidget(self.colorbytags_checkbox)
+        self.gridLayout_2.addWidget(self.widget_2, 5, 1, 1, 1)
         self.gridLayout.addWidget(self.tSeriesListFrame, 0, 1, 1, 1)
         ROI_Buddy.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ROI_Buddy)
@@ -229,21 +250,23 @@ class Ui_ROI_Buddy(object):
         QtCore.QMetaObject.connectSlotsByName(ROI_Buddy)
 
     def retranslateUi(self, ROI_Buddy):
-        ROI_Buddy.setWindowTitle(QtGui.QApplication.translate("ROI_Buddy", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("ROI_Buddy", "Plane:", None, QtGui.QApplication.UnicodeUTF8))
-        self.baseImage_label.setText(QtGui.QApplication.translate("ROI_Buddy", "Base Image:", None, QtGui.QApplication.UnicodeUTF8))
-        self.processed_checkbox.setText(QtGui.QApplication.translate("ROI_Buddy", "Processed", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("ROI_Buddy", "ROI List:", None, QtGui.QApplication.UnicodeUTF8))
-        self.new_set_button.setText(QtGui.QApplication.translate("ROI_Buddy", "New Set", None, QtGui.QApplication.UnicodeUTF8))
-        self.delete_set_button.setText(QtGui.QApplication.translate("ROI_Buddy", "Delete Set", None, QtGui.QApplication.UnicodeUTF8))
-        self.show_ROIs_checkbox.setText(QtGui.QApplication.translate("ROI_Buddy", "show ROIs", None, QtGui.QApplication.UnicodeUTF8))
-        self.show_all_checkbox.setText(QtGui.QApplication.translate("ROI_Buddy", "show all", None, QtGui.QApplication.UnicodeUTF8))
-        self.remove_tseries_button.setText(QtGui.QApplication.translate("ROI_Buddy", "remove", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_tseries_button.setText(QtGui.QApplication.translate("ROI_Buddy", "add ", None, QtGui.QApplication.UnicodeUTF8))
-        self.import_rois_button.setText(QtGui.QApplication.translate("ROI_Buddy", "import ROIs", None, QtGui.QApplication.UnicodeUTF8))
-        self.save_current_rois_button.setText(QtGui.QApplication.translate("ROI_Buddy", "save current ROIs", None, QtGui.QApplication.UnicodeUTF8))
-        self.edit_mode_radiobutton.setText(QtGui.QApplication.translate("ROI_Buddy", "Edit Mode", None, QtGui.QApplication.UnicodeUTF8))
-        self.align_mode_radiobutton.setText(QtGui.QApplication.translate("ROI_Buddy", "Align Mode", None, QtGui.QApplication.UnicodeUTF8))
-        self.register_rois_button.setText(QtGui.QApplication.translate("ROI_Buddy", "Register ROIs", None, QtGui.QApplication.UnicodeUTF8))
-        self.propagate_tags_button.setText(QtGui.QApplication.translate("ROI_Buddy", "Propagate Tags", None, QtGui.QApplication.UnicodeUTF8))
+        ROI_Buddy.setWindowTitle(_translate("ROI_Buddy", "MainWindow", None))
+        self.label_2.setText(_translate("ROI_Buddy", "Plane:", None))
+        self.baseImage_label.setText(_translate("ROI_Buddy", "Base Image:", None))
+        self.processed_checkbox.setText(_translate("ROI_Buddy", "Processed", None))
+        self.label.setText(_translate("ROI_Buddy", "ROI List:", None))
+        self.new_set_button.setText(_translate("ROI_Buddy", "New Set", None))
+        self.delete_set_button.setText(_translate("ROI_Buddy", "Delete Set", None))
+        self.show_ROIs_checkbox.setText(_translate("ROI_Buddy", "show ROIs", None))
+        self.show_all_checkbox.setText(_translate("ROI_Buddy", "show all", None))
+        self.remove_tseries_button.setText(_translate("ROI_Buddy", "remove", None))
+        self.add_tseries_button.setText(_translate("ROI_Buddy", "add ", None))
+        self.import_rois_button.setText(_translate("ROI_Buddy", "import ROIs", None))
+        self.save_current_rois_button.setText(_translate("ROI_Buddy", "save current ROIs", None))
+        self.edit_mode_radiobutton.setText(_translate("ROI_Buddy", "Edit Mode", None))
+        self.align_mode_radiobutton.setText(_translate("ROI_Buddy", "Align Mode", None))
+        self.register_rois_button.setText(_translate("ROI_Buddy", "Register ROIs", None))
+        self.propagate_tags_button.setText(_translate("ROI_Buddy", "Propagate Tags", None))
+        self.colorbyid_checkbox.setText(_translate("ROI_Buddy", "color by ID", None))
+        self.colorbytags_checkbox.setText(_translate("ROI_Buddy", "color by tags", None))
 
