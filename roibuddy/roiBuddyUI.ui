@@ -333,6 +333,9 @@
             <property name="text">
              <string>color by ID</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
             <attribute name="buttonGroup">
              <string notr="true">colorbyMode</string>
             </attribute>
@@ -381,7 +384,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
@@ -390,7 +393,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="modeSelection"/>
   <buttongroup name="colorbyMode"/>
+  <buttongroup name="modeSelection"/>
  </buttongroups>
 </ui>

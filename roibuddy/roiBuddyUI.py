@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'roiBuddyUI.ui'
 #
-# Created: Wed Feb 25 00:43:45 2015
+# Created: Wed Feb 25 13:14:12 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -219,6 +219,7 @@ class Ui_ROI_Buddy(object):
         self.verticalLayout.setMargin(0)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.colorbyid_radioButton = QtGui.QRadioButton(self.widget_2)
+        self.colorbyid_radioButton.setChecked(True)
         self.colorbyid_radioButton.setObjectName(_fromUtf8("colorbyid_radioButton"))
         self.colorbyMode = QtGui.QButtonGroup(ROI_Buddy)
         self.colorbyMode.setObjectName(_fromUtf8("colorbyMode"))
@@ -243,7 +244,7 @@ class Ui_ROI_Buddy(object):
         self.gridLayout.addWidget(self.itemListFrame, 3, 1, 1, 1)
         ROI_Buddy.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(ROI_Buddy)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 19))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         ROI_Buddy.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(ROI_Buddy)
