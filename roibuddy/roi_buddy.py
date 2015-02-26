@@ -196,6 +196,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # initialize the mode
         self.mode = 'edit'
 
+        self.colorby_mode = 'id'
         self.colors_dict = {}
 
         # deactivate buttons until a t-series is added
@@ -371,6 +372,9 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         # show/hide ROIs
         self.show_ROIs_checkbox.stateChanged.connect(self.toggle_show_rois)
         self.show_all_checkbox.stateChanged.connect(self.toggle_show_all)
+
+        # toggle color mode
+        self.colorbyMode.buttonClicked.connect(self.toggle_colorby)
 
         # save ROIs buttons
         self.save_current_rois_button.clicked.connect(
@@ -942,6 +946,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                     for tag in tags_list:
                         poly.tags.add(tag)
                     poly.update_name()
+                    poly.update_color()
 
     def clear_tags(self):
         """
@@ -965,6 +970,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             for poly in polys_to_clear:
                 poly.tags = None
                 poly.update_name()
+                poly.update_color()
 
     def edit_tags(self):
         """
@@ -1008,6 +1014,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 for poly in polys_to_edit:
                     poly.tags = split_tags
                     poly.update_name()
+                    poly.update_color()
 
     def merge_ROIs(self):
         """
@@ -1301,6 +1308,29 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         else:
             self.hide_rois(show_in_list=self.mode == 'edit')
             self.show_rois(active_tSeries, show_in_list=self.mode == 'edit')
+        self.plot.replot()
+
+    def toggle_colorby(self, button):
+
+        update_color = False
+        if button is self.colorbyid_radioButton and self.colorby_mode == 'tags':
+            # Toggle to colorby id
+            self.colorby_mode = 'id'
+            update_color = True
+
+        if button is self.colorbytags_radioButton and self.colorby_mode == 'id':
+            # Togle to colorby tags
+            self.colorby_mode = 'tags'
+            update_color = True
+
+        if update_color:
+            tSeries_list = [self.tSeries_list.item(i)
+                            for i in range(self.tSeries_list.count())]
+            for tSeries in tSeries_list:
+                for roi in tSeries.roi_list:
+                    roi.update_color()
+
+        self.plot.unselect_all()
         self.plot.replot()
 
     def save(self, tSeries_list):
@@ -1990,6 +2020,12 @@ class UI_ROI(PolygonShape, ROI):
         self.initialize_style()
         self.update_name()
 
+    def _tags_str(self):
+        tags_str = ''
+        for tag in self.tags:
+            tags_str += tag + ', '
+        return tags_str.rstrip(', ')
+
     @staticmethod
     def convert_polygon(polygon, parent):
         """Takes a polygon and returns a similar UI_ROI object."""
@@ -2022,30 +2058,41 @@ class UI_ROI(PolygonShape, ROI):
         """Updates the color of the ROI from the colors_dict or a new
         random color
 
-        ROIs are colored first by id, then by label, then randomly
+        If colorby_mode is 'id', ROIs are colored first by id, then by label,
+            then randomly.
+        If colorby_mode is 'tags', ROIs with the same set of tags will be
+            given the same color.
 
         """
 
-        if self.id is None:
-            if self.label is None:
-                color = random_color()
-            elif self.label in self.parent.parent.colors_dict:
-                color = self.parent.parent.colors_dict[self.label]
+        if self.parent.parent.colorby_mode == 'id':
+            if self.id is None:
+                if self.label is None:
+                    color = random_color()
+                elif self.label in self.parent.parent.colors_dict:
+                    color = self.parent.parent.colors_dict[self.label]
+                else:
+                    color = random_color()
+                    self.parent.parent.colors_dict[self.label] = color
+            elif self.id in self.parent.parent.colors_dict:
+                color = self.parent.parent.colors_dict[self.id]
             else:
                 color = random_color()
-                self.parent.parent.colors_dict[self.label] = color
-        elif self.id in self.parent.parent.colors_dict:
-            color = self.parent.parent.colors_dict[self.id]
+                self.parent.parent.colors_dict[self.id] = color
+        elif self.parent.parent.colorby_mode == 'tags':
+            tags_str = self._tags_str()
+            if tags_str in self.parent.parent.colors_dict:
+                color = self.parent.parent.colors_dict[tags_str]
+            else:
+                color = random_color()
+                self.parent.parent.colors_dict[tags_str] = color
         else:
-            color = random_color()
-            self.parent.parent.colors_dict[self.id] = color
+            raise ValueError
         self.pen.setColor(color)
 
     def update_name(self):
-        name = self.label + ':' if self.label is not None else ':'
-        for tag in self.tags:
-            name += ' ' + tag + ','
-        name = name.rstrip(',')
+        name = self.label + ': ' if self.label is not None else ': '
+        name += self._tags_str()
         self.setTitle(name)
 
     def update_points(self):
