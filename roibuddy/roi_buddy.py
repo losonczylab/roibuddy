@@ -1561,7 +1561,6 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 method_args = {'order': poly_order}
             else:
                 method_args = {}
-
             active_tSeries.dataset.import_transformed_ROIs(
                 source_dataset=source_dataset.dataset,
                 method=reg_method,
@@ -1599,7 +1598,7 @@ class UI_tSeries(QListWidgetItem):
     def __init__(self, sima_path, parent):
         # Try to load the dataset first, if it fails, don't add it to the panel
         self.dataset = ImagingDataset.load(sima_path)
-        
+
         QListWidgetItem.__init__(
             self, QString(dirname(sima_path)), parent=parent.tSeries_list)
 
@@ -1765,7 +1764,7 @@ class UI_tSeries(QListWidgetItem):
                             break
                     if trg_coords is None:
                         transforms.append(None)
-                        break
+                        continue
 
                     src_coords = None
                     for roi in self.dataset.ROIs[ANCHORS]:
@@ -1774,7 +1773,7 @@ class UI_tSeries(QListWidgetItem):
                             break
                     if src_coords is None:
                         transforms.append(None)
-                        break
+                        continue
                     assert len(src_coords) == len(trg_coords)
 
                     mean_dists = []
