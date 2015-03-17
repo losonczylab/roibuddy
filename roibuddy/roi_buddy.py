@@ -1826,7 +1826,7 @@ class UI_tSeries(QListWidgetItem):
                             transforms[idx] = transforms[idx + 1]
                 self.transforms[target_tSeries] = transforms
             else:
-                self.transforms[target_tSeries] = []
+                transforms = []
                 for plane in xrange(self.num_planes):
                     ref = self.dataset.time_averages[
                         plane, :, :, ref_active_channel]
@@ -1838,7 +1838,8 @@ class UI_tSeries(QListWidgetItem):
                     # translate into same space
                     transform += tf.AffineTransform(
                         translation=target_tSeries.shape[::-1])
-                    self.transforms[target_tSeries].append(transform)
+                    transforms.append(transform)
+                self.transforms[target_tSeries] = transforms
         # index the result by plane
         return self.transforms[target_tSeries]
 
