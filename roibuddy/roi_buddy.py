@@ -1544,45 +1544,49 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         if not ok:
             return
 
-        if auto_manual == 'Auto':
-            anchor_label = None
+        if reg_method == 'none':
+            src_rois = source_dataset.dataset.ROIs[source_label]
+            active_tSeries.dataset.add_ROIs(src_rois, label=target_label)
         else:
-            if '_REGISTRATION_ANCHORS' not in source_dataset.roi_sets or \
-                    '_REGISTRATION_ANCHORS' not in active_tSeries.roi_sets:
-                QMessageBox.warning(
-                    self, 'Transform Error',
-                    'Need to save _REGISTRATION_ANCHORS ROIList',
-                    QMessageBox.Ok)
-                return
-            anchor_label = '_REGISTRATION_ANCHORS'
-
-        try:
-            if reg_method == 'polynomial':
-                method_args = {'order': poly_order}
+            if auto_manual == 'Auto':
+                anchor_label = None
             else:
-                method_args = {}
-            active_tSeries.dataset.import_transformed_ROIs(
-                source_dataset=source_dataset.dataset,
-                method=reg_method,
-                source_channel=source_channel,
-                target_channel=target_channel,
-                source_label=source_label,
-                target_label=target_label,
-                anchor_label=anchor_label,
-                copy_properties=copy_properties,
-                **method_args)
-        except TransformError:
-            QMessageBox.warning(self, 'Transform Error',
-                                'Transformation failed', QMessageBox.Ok)
-            return
-        else:
-            self.remove_rois(active_tSeries.roi_list)
-            active_tSeries.roi_sets.append(target_label)
-            active_tSeries.active_rois = target_label
-            self.initialize_roi_set_list(active_tSeries)
-            active_tSeries.initialize_rois()
-            self.show_rois(active_tSeries, show_in_list=True)
-            self.plot.replot()
+                if '_REGISTRATION_ANCHORS' not in source_dataset.roi_sets or \
+                        '_REGISTRATION_ANCHORS' not in active_tSeries.roi_sets:
+                    QMessageBox.warning(
+                        self, 'Transform Error',
+                        'Need to save _REGISTRATION_ANCHORS ROIList',
+                        QMessageBox.Ok)
+                    return
+                anchor_label = '_REGISTRATION_ANCHORS'
+
+            try:
+                if reg_method == 'polynomial':
+                    method_args = {'order': poly_order}
+                else:
+                    method_args = {}
+                active_tSeries.dataset.import_transformed_ROIs(
+                    source_dataset=source_dataset.dataset,
+                    method=reg_method,
+                    source_channel=source_channel,
+                    target_channel=target_channel,
+                    source_label=source_label,
+                    target_label=target_label,
+                    anchor_label=anchor_label,
+                    copy_properties=copy_properties,
+                    **method_args)
+            except TransformError:
+                QMessageBox.warning(self, 'Transform Error',
+                                    'Transformation failed', QMessageBox.Ok)
+                return
+
+        self.remove_rois(active_tSeries.roi_list)
+        active_tSeries.roi_sets.append(target_label)
+        active_tSeries.active_rois = target_label
+        self.initialize_roi_set_list(active_tSeries)
+        active_tSeries.initialize_rois()
+        self.show_rois(active_tSeries, show_in_list=True)
+        self.plot.replot()
 
     def next_id(self):
         """Return the next valid unused id across all tSeries"""
@@ -2228,7 +2232,8 @@ class ImportROIsWidget(QDialog, Ui_importROIsWidget):
                                           QString('polynomial'),
                                           QString('piecewise-affine'),
                                           QString('projective'),
-                                          QString('similarity')])
+                                          QString('similarity'),
+                                          QString('none')])
         self.registrationMethod.setCurrentIndex(1)
 
         self.polynomialOrder.setText(QString('2'))
