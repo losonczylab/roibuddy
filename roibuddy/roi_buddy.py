@@ -2062,8 +2062,8 @@ class UI_ROI(PolygonShape, ROI):
         """Updates the color of the ROI from the colors_dict or a new
         random color
 
-        If colorby_mode is 'id', ROIs are colored first by id, then by label,
-            then randomly.
+        If colorby_mode is 'id', ROIs are colored first by id, then ROIs in
+            the same dataset with the same label are given the same color.
         If colorby_mode is 'tags', ROIs with the same set of tags will be
             given the same color.
 
@@ -2073,11 +2073,13 @@ class UI_ROI(PolygonShape, ROI):
             if self.id is None:
                 if self.label is None:
                     color = random_color()
-                elif self.label in self.parent.parent.colors_dict:
-                    color = self.parent.parent.colors_dict[self.label]
                 else:
-                    color = random_color()
-                    self.parent.parent.colors_dict[self.label] = color
+                    dict_key = str(hash(self.parent)) + str(self.label)
+                    if dict_key in self.parent.parent.colors_dict:
+                        color = self.parent.parent.colors_dict[dict_key]
+                    else:
+                        color = random_color()
+                        self.parent.parent.colors_dict[dict_key] = color
             elif self.id in self.parent.parent.colors_dict:
                 color = self.parent.parent.colors_dict[self.id]
             else:
