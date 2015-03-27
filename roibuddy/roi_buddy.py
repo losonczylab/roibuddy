@@ -12,7 +12,7 @@ from shapely.geometry import MultiPolygon, Polygon
 from shapely.topology import TopologicalError
 from skimage import transform as tf
 import itertools as it
-from random import shuffle
+from random import shuffle, choice
 import warnings as wa
 
 from roiBuddyUI import Ui_ROI_Buddy
@@ -1955,7 +1955,7 @@ class UI_tSeries(QListWidgetItem):
                     poly = mask2poly(mask)
 
                     points = np.array(poly[0].exterior.coords)[:, :2]
-                    new_roi = UI_ROI(self, points, id=None,
+                    new_roi = UI_ROI(self, points, id=random_id(),
                                      label=self.next_label(), tags=None)
                     self.parent.plot.del_item(item)
                     self.parent.plot.add_item(new_roi)
@@ -2040,7 +2040,7 @@ class UI_ROI(PolygonShape, ROI):
             parent.parent.plot.del_item(polygon)
             return None
 
-        new_roi = UI_ROI(parent=parent, points=points.tolist(), id=None,
+        new_roi = UI_ROI(parent=parent, points=points.tolist(), id=random_id(),
                          label=parent.next_label(), tags=None)
 
         coords = new_roi.coords
@@ -2062,8 +2062,8 @@ class UI_ROI(PolygonShape, ROI):
         """Updates the color of the ROI from the colors_dict or a new
         random color
 
-        If colorby_mode is 'id', ROIs are colored first by id, then by label,
-            then randomly.
+        If colorby_mode is 'id', ROIs are colored first by id, then ROIs in
+            the same dataset with the same label are given the same color.
         If colorby_mode is 'tags', ROIs with the same set of tags will be
             given the same color.
 
@@ -2073,11 +2073,13 @@ class UI_ROI(PolygonShape, ROI):
             if self.id is None:
                 if self.label is None:
                     color = random_color()
-                elif self.label in self.parent.parent.colors_dict:
-                    color = self.parent.parent.colors_dict[self.label]
                 else:
-                    color = random_color()
-                    self.parent.parent.colors_dict[self.label] = color
+                    dict_key = str(hash(self.parent)) + str(self.label)
+                    if dict_key in self.parent.parent.colors_dict:
+                        color = self.parent.parent.colors_dict[dict_key]
+                    else:
+                        color = random_color()
+                        self.parent.parent.colors_dict[dict_key] = color
             elif self.id in self.parent.parent.colors_dict:
                 color = self.parent.parent.colors_dict[self.id]
             else:
@@ -2310,6 +2312,13 @@ def random_color():
     return QColor(qRgb(np.random.randint(255),
                        np.random.randint(255),
                        np.random.randint(255)))
+
+
+def random_id():
+    """Returns a random 13 (_ + 12) character long id"""
+    chars = \
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return '_' + ''.join(choice(chars) for i in range(12))
 
 
 def main():
