@@ -12,7 +12,7 @@ from shapely.geometry import MultiPolygon, Polygon
 from shapely.topology import TopologicalError
 from skimage import transform as tf
 import itertools as it
-from random import shuffle
+from random import shuffle, choice
 import warnings as wa
 
 from roiBuddyUI import Ui_ROI_Buddy
@@ -1955,7 +1955,7 @@ class UI_tSeries(QListWidgetItem):
                     poly = mask2poly(mask)
 
                     points = np.array(poly[0].exterior.coords)[:, :2]
-                    new_roi = UI_ROI(self, points, id=None,
+                    new_roi = UI_ROI(self, points, id=random_id(),
                                      label=self.next_label(), tags=None)
                     self.parent.plot.del_item(item)
                     self.parent.plot.add_item(new_roi)
@@ -2040,7 +2040,7 @@ class UI_ROI(PolygonShape, ROI):
             parent.parent.plot.del_item(polygon)
             return None
 
-        new_roi = UI_ROI(parent=parent, points=points.tolist(), id=None,
+        new_roi = UI_ROI(parent=parent, points=points.tolist(), id=random_id(),
                          label=parent.next_label(), tags=None)
 
         coords = new_roi.coords
@@ -2312,6 +2312,13 @@ def random_color():
     return QColor(qRgb(np.random.randint(255),
                        np.random.randint(255),
                        np.random.randint(255)))
+
+
+def random_id():
+    """Returns a random 13 (_ + 12) character long id"""
+    chars = \
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return '_' + ''.join(choice(chars) for i in range(12))
 
 
 def main():
