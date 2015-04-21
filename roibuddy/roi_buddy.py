@@ -210,6 +210,12 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         """Esc button filter -- prevent application from crashing"""
         if (event.key() == Qt.Key_Escape):
             event.ignore()
+        elif (event.key() in [
+                Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right]):
+            if self.mode == 'edit' and len(self.plot.get_selected_items()):
+                self.arrow_press_event(event)
+            else:
+                ImageDialog.keyPressEvent(self.viewer, event)
         else:
             ImageDialog.keyPressEvent(self.viewer, event)
 
@@ -227,6 +233,37 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 if active_tSeries.active_plane - 1 < 0:
                     return
                 self.plane_index_box.setValue(active_tSeries.active_plane - 1)
+
+    def arrow_press_event(self, event):
+        """If you press an arrow key while ROIs are selected, shift them all"""
+
+        if not self.mode == 'edit':
+            return
+
+        selected_items = self.plot.get_selected_items()
+
+        selected_items = filter(
+            lambda obj: isinstance(obj, guiqwt.shapes.PolygonShape),
+            selected_items)
+
+        if not len(selected_items):
+            return
+
+        key = event.key()
+
+        for item in selected_items:
+            points = item.get_points()
+            if key == Qt.Key_Up:
+                points[:, 1] -= 1
+            elif key == Qt.Key_Down:
+                points[:, 1] += 1
+            elif key == Qt.Key_Left:
+                points[:, 0] -= 1
+            elif key == Qt.Key_Right:
+                points[:, 0] += 1
+            item.set_points(points)
+
+        self.plot.replot()
 
     def create_menu(self):
         self.file_menu = self.menuBar().addMenu("&File")
@@ -337,6 +374,11 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             triggered=self.activate_selection_tool, shortcut="S",
             tip="Activate Selection tool")
         self.addAction(self.activate_selection_tool_action)
+
+        self.select_all_action = qthelpers.create_action(
+            self, "&Select All", triggered=self.select_all_rois,
+            shortcut='Ctrl+A')
+        self.addAction(self.select_all_action)
 
         self.debug_action = qthelpers.create_action(
             self, "&Debug", triggered=debug_trace, shortcut="F10")
@@ -553,6 +595,16 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
         for roi in tSeries.roi_list:
             if roi.coords[0][0, 2] == tSeries.active_plane:
                 roi.show(show_in_list)
+
+    def select_all_rois(self):
+
+        all_items = self.plot.get_items()
+        items_to_select = filter(
+            lambda obj: isinstance(obj, guiqwt.shapes.PolygonShape) and
+            obj.isVisible(), all_items)
+        self.plot.select_some_items(items_to_select)
+
+        self.plot.replot()
 
     def hide_rois(self, show_in_list=None):
         for item in self.plot.items:
@@ -1818,8 +1870,8 @@ class UI_tSeries(QListWidgetItem):
                 assert not all(transform_check)
 
                 if any(transform_check):
-                    wa.warn("Z-plane missing transform. Copying from adjacet" +
-                            " plane, accuracy not guaranteed")
+                    wa.warn("Z-plane missing transform. Copying from " +
+                            "adjacent plane, accuracy not guaranteed")
                     # If any planes were missing an anchor set, copy transforms
                     # from adjacent planes
                     for idx in range(len(transforms) - 1):
