@@ -1565,6 +1565,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 if roi.id is not None:
                     roi.tags = roi.tags.union(tags_dict[roi.id])
                     roi.update_name()
+                    roi.update_color()
 
     def import_rois(self):
 
