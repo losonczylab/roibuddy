@@ -1696,7 +1696,7 @@ class UI_tSeries(QListWidgetItem):
         for plane in self.dataset.time_averages:
             for ch_idx, ch_name in enumerate(self.dataset.channel_names):
                 self.base_images[ch_name].append(
-                    plane[:, :, ch_idx] / np.amax(plane[:, :, ch_idx]))
+                    plane[:, :, ch_idx] / np.nanmax(plane[:, :, ch_idx]))
 
     def show(self):
         try:
