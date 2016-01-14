@@ -15,16 +15,6 @@ import itertools as it
 from random import shuffle, choice
 import warnings as wa
 
-from roiBuddyUI import Ui_ROI_Buddy
-from importROIsWidget import Ui_importROIsWidget
-
-import sima
-from sima.imaging import ImagingDataset
-from sima.ROI import ROIList, ROI, mask2poly, poly2mask
-from sima.segment import ca1pc
-from sima.misc import TransformError, estimate_array_transform, \
-    estimate_coordinate_transform
-
 from guidata import qthelpers
 
 from PyQt4.QtCore import *
@@ -32,7 +22,8 @@ from PyQt4.QtGui import *
 
 import guiqwt.baseplot
 import guiqwt_patch
-guiqwt.baseplot.BasePlot.add_item_with_z_offset = guiqwt_patch.add_item_with_z_offset
+guiqwt.baseplot.BasePlot.add_item_with_z_offset = \
+    guiqwt_patch.add_item_with_z_offset
 from guiqwt.plot import ImageDialog
 from guiqwt.tools import FreeFormTool, InteractiveTool, \
     RectangleTool, RectangularShapeTool, SelectTool
@@ -41,7 +32,18 @@ from guiqwt.shapes import PolygonShape, EllipseShape
 from guiqwt.events import setup_standard_tool_filter, PanHandler
 from guiqwt.image import ImageItem
 
-icon_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'icons')
+import sima
+from sima.imaging import ImagingDataset
+from sima.ROI import ROIList, ROI, mask2poly, poly2mask
+from sima.segment import ca1pc
+from sima.misc import TransformError, estimate_array_transform, \
+    estimate_coordinate_transform
+
+from roiBuddyUI import Ui_ROI_Buddy
+from importROIsWidget import Ui_importROIsWidget
+
+icon_filepath = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), 'icons')
 
 if isdir('/data/'):
     data_path = '/data/'
