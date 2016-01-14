@@ -25,10 +25,10 @@ from sima.segment import ca1pc
 from sima.misc import TransformError, estimate_array_transform, \
     estimate_coordinate_transform
 
+from guidata import qthelpers
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-from guidata import qthelpers
 
 import guiqwt.baseplot
 import guiqwt_patch
@@ -50,6 +50,29 @@ else:
 
 # TODO: move this in to an option somewhere in the GUI
 ENABLE_MOUSE_WHEEL_Z_SCROLL = True
+
+
+#----- The following code was originally wrote for spyderlib (MIT license) ----
+PY2 = sys.version[0] == '2'
+
+def to_text_string(obj, encoding=None):
+    """Convert `obj` to (unicode) text string"""
+    if PY2:
+        # Python 2
+        if encoding is None:
+            return unicode(obj)
+        else:
+            return unicode(obj, encoding)
+    else:
+        # Python 3
+        if encoding is None:
+            return str(obj)
+        elif isinstance(obj, str):
+            # In case this function is not used properly, this could happen
+            return obj
+        else:
+            return str(obj, encoding)
+#------------------------------------------------------------------------------
 
 
 def debug_trace():
@@ -305,7 +328,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             self, "&Save current ROIs",
             triggered=lambda: self.save([self.tSeries_list.currentItem()]),
             shortcut="Ctrl+S",
-            icon=QIcon(QString(os.path.join(icon_filepath,"document-save-5.png"))),
+            icon=QIcon(os.path.join(icon_filepath,"document-save-5.png")),
             tip="Save the current ROI set to file.")
 
         self.save_all_action = qthelpers.create_action(
@@ -313,44 +336,44 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
             triggered=lambda: self.save(
                 [self.tSeries_list.item(i) for i in range(
                     self.tSeries_list.count())]),
-            icon=QIcon(QString(os.path.join(icon_filepath, "document-save-all.png"))
+            icon=QIcon(os.path.join(icon_filepath, "document-save-all.png")
                        ), tip="Save all ROI sets with the same label")
 
         # #ROI Manager actions
         self.delete_action = qthelpers.create_action(
             self, "&Delete ROI", triggered=self.delete, shortcut="Del",
-            icon=QIcon(QString(os.path.join(icon_filepath, "edit-delete-2.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "edit-delete-2.png")),
             tip="Remove the selected ROIs")
         self.delete_action.setShortcuts(["D", "Del", "Backspace"])
 
         self.edit_label_action = qthelpers.create_action(
             self, "&Edit Label", triggered=self.edit_label,
-            icon=QIcon(QString(os.path.join(icon_filepath, "document-sign.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "document-sign.png")),
             tip="Edit the ROI 'label' attribute")
 
         self.add_tags_action = qthelpers.create_action(
             self, "&Add Tags", triggered=self.add_tags, shortcut="T",
-            icon=QIcon(QString(os.path.join(icon_filepath, "flag-green.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "flag-green.png")),
             tip="Add tags to the selected ROIs")
 
         self.clear_tags_action = qthelpers.create_action(
             self, "&Remove Tags", triggered=self.clear_tags, shortcut="C",
-            icon=QIcon(QString(os.path.join(icon_filepath, "flag-red.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "flag-red.png")),
             tip="Remove tags from the selected ROIs")
 
         self.edit_tags_action = qthelpers.create_action(
             self, "&Edit Tags", triggered=self.edit_tags,
-            icon=QIcon(QString(os.path.join(icon_filepath, "edit.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "edit.png")),
             tip="Edit tags for the selected ROI")
 
         self.merge_rois = qthelpers.create_action(
             self, "&Merge", triggered=self.merge_ROIs, shortcut="M",
-            icon=QIcon(QString(os.path.join(icon_filepath, "insert-link.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "insert-link.png")),
             tip="Merge ROIs")
 
         self.unmerge_rois = qthelpers.create_action(
             self, "&Unmerge", triggered=self.unmerge_ROIs, shortcut="U",
-            icon=QIcon(QString(os.path.join(icon_filepath, "edit-cut.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "edit-cut.png")),
             tip="Unmerge an ROI")
 
         self.edit_roi_action = qthelpers.create_action(
@@ -360,7 +383,7 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
 
         self.randomize_colors_action = qthelpers.create_action(
             self, "&Randomize", triggered=self.randomize_colors, shortcut="R",
-            icon=QIcon(QString(os.path.join(icon_filepath, "colorize.png"))),
+            icon=QIcon(os.path.join(icon_filepath, "colorize.png")),
             tip="Randomize ROI colors")
 
         self.activate_freeform_tool_action = qthelpers.create_action(
@@ -1656,8 +1679,8 @@ class UI_tSeries(QListWidgetItem):
         # Try to load the dataset first, if it fails, don't add it to the panel
         self.dataset = ImagingDataset.load(sima_path)
 
-        QListWidgetItem.__init__(
-            self, QString(dirname(sima_path)), parent=parent.tSeries_list)
+        QListWidgetItem.__init__(self, to_text_string(dirname(sima_path)),
+                                 parent=parent.tSeries_list)
 
         self.parent = parent
 
@@ -2221,7 +2244,7 @@ class lockROIsWidget(QDialog):
             self.cancel)
 
         self.setLayout(self.layout)
-        self.setWindowTitle(QString('Lock ROI IDs during alignment?'))
+        self.setWindowTitle('Lock ROI IDs during alignment?')
 
     def initialize_select_all(self):
         c = QCheckBox('Select All')
@@ -2271,27 +2294,28 @@ class ImportROIsWidget(QDialog, Ui_importROIsWidget):
                                 range(self.parent.tSeries_list.count())]
         self.source_datasets.remove(active_dataset)
 
-        self.sourceDataset.addItems([QString(x.dataset.savedir) for x in
-                                     self.source_datasets])
+        self.sourceDataset.addItems([to_text_string(x.dataset.savedir)
+                                     for x in self.source_datasets])
 
         target_channels = active_dataset.dataset.channel_names
-        self.targetChannel.addItems([QString(x) for x in target_channels])
+        self.targetChannel.addItems([to_text_string(x)
+                                     for x in target_channels])
 
         self.sourceDataset.currentIndexChanged.connect(
             self.initialize_source_options)
 
-        self.auto_manual.addItems([QString('Auto'), QString('Manual')])
+        self.auto_manual.addItems(['Auto', 'Manual'])
         self.auto_manual.setCurrentIndex(0)
 
-        self.registrationMethod.addItems([QString('affine'),
-                                          QString('polynomial'),
-                                          QString('piecewise-affine'),
-                                          QString('projective'),
-                                          QString('similarity'),
-                                          QString('none')])
+        self.registrationMethod.addItems(['affine',
+                                          'polynomial',
+                                          'piecewise-affine',
+                                          'projective',
+                                          'similarity',
+                                          'none'])
         self.registrationMethod.setCurrentIndex(1)
 
-        self.polynomialOrder.setText(QString('2'))
+        self.polynomialOrder.setText('2')
 
         self.acceptButton.clicked.connect(self.accept)
         self.cancelButton.clicked.connect(self.reject)
@@ -2304,11 +2328,13 @@ class ImportROIsWidget(QDialog, Ui_importROIsWidget):
 
         source_channels = self.source_dataset.dataset.channel_names
         self.sourceChannel.clear()
-        self.sourceChannel.addItems([QString(x) for x in source_channels])
+        self.sourceChannel.addItems([to_text_string(x)
+                                     for x in source_channels])
 
         source_labels = self.source_dataset.dataset.ROIs.keys()
         self.sourceLabel.clear()
-        self.sourceLabel.addItems([QString(x) for x in source_labels])
+        self.sourceLabel.addItems([to_text_string(x)
+                                   for x in source_labels])
 
     @staticmethod
     def getParams(parent=None):
