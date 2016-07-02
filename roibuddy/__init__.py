@@ -1,1 +1,1 @@
-from roiBuddyUI import *
+from .roiBuddyUI import *
