@@ -21,7 +21,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import guiqwt.baseplot
-import guiqwt_patch
+from . import guiqwt_patch
 guiqwt.baseplot.BasePlot.add_item_with_z_offset = \
     guiqwt_patch.add_item_with_z_offset
 from guiqwt.plot import ImageDialog
@@ -39,8 +39,8 @@ from sima.segment import ca1pc
 from sima.misc import TransformError, estimate_array_transform, \
     estimate_coordinate_transform
 
-from roiBuddyUI import Ui_ROI_Buddy
-from importROIsWidget import Ui_importROIsWidget
+from .roiBuddyUI import Ui_ROI_Buddy
+from .importROIsWidget import Ui_importROIsWidget
 
 icon_filepath = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), 'icons')
