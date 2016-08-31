@@ -11,7 +11,7 @@
 #
 # To run:
 #   docker run -it --rm --net=host --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:rw 
-#       -v:PATH/TO/DATA:/data --name roibuddy losonczylab/roibuddy
+#       -v PATH/TO/DATA:/data --name roibuddy losonczylab/roibuddy
 #
 
 FROM losonczylab/sima
@@ -36,4 +36,4 @@ WORKDIR /roibuddy
 
 RUN python setup.py install
 
-ENTRYPOINT python -m roibuddy.roi_buddy
+ENTRYPOINT python -m roibuddy
