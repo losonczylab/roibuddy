@@ -1,4 +1,6 @@
 #! python
+from __future__ import absolute_import
+
 import os
 import sys
 from os.path import join, dirname, isdir
@@ -14,6 +16,9 @@ from skimage import transform as tf
 import itertools as it
 from random import shuffle, choice
 import warnings as wa
+
+# NOTE: The import order of PyQt, guidata, and guiqwt is very import and
+# will cause import errors if changed.
 
 from guidata import qthelpers
 
@@ -2400,13 +2405,3 @@ def random_id():
     chars = \
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return '_' + ''.join(choice(chars) for i in range(12))
-
-
-def main():
-    app = QApplication(sys.argv)
-    form = RoiBuddy()
-    form.show()
-    app.exec_()
-
-if __name__ == "__main__":
-    main()
