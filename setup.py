@@ -17,7 +17,7 @@ setup(
     name='roibuddy',
     version='1.0.0-dev',
     packages=['roibuddy'],
-    entry_points={'gui_scripts': ['roibuddy = roibuddy.roi_buddy:main']},
+    entry_points={'gui_scripts': ['roibuddy = roibuddy.__main__:main']},
     install_requires=[
         'sima',
         'guiqwt>=2.1.6',
