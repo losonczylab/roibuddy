@@ -1647,6 +1647,13 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                 if reg_method == 'polynomial':
                     method_args = {'order': poly_order}
                 else:
+                    if reg_method == 'affine-processed':
+                        reg_method = 'affine'
+                        pre_processing_method = 'ca1pc'
+                        pre_processing_kwargs = {'x_diameter':14, 'y_diameter':7} 
+                    else:
+                        pre_processing_method = None
+                        pre_processing_kwargs = {}
                     method_args = {}
                 active_tSeries.dataset.import_transformed_ROIs(
                     source_dataset=source_dataset.dataset,
@@ -1657,6 +1664,8 @@ class RoiBuddy(QMainWindow, Ui_ROI_Buddy):
                     target_label=target_label,
                     anchor_label=anchor_label,
                     copy_properties=copy_properties,
+                    pre_processing_method=pre_processing_method,
+                    pre_processing_kwargs=pre_processing_kwargs,
                     **method_args)
             except TransformError:
                 QMessageBox.warning(self, 'Transform Error',
@@ -2314,7 +2323,8 @@ class ImportROIsWidget(QDialog, Ui_importROIsWidget):
         self.auto_manual.addItems(['Auto', 'Manual'])
         self.auto_manual.setCurrentIndex(0)
 
-        self.registrationMethod.addItems(['affine',
+        self.registrationMethod.addItems(['affine-processed',
+                                          'affine',
                                           'polynomial',
                                           'piecewise-affine',
                                           'projective',
