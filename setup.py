@@ -15,13 +15,14 @@ Topic :: Scientific/Engineering
 
 setup(
     name='roibuddy',
-    version='1.0.0-dev',
+    version='1.0.1',
     packages=['roibuddy'],
     entry_points={'gui_scripts': ['roibuddy = roibuddy.__main__:main']},
     install_requires=[
-        'sima',
-        'guiqwt>=2.1.6',
-        'guidata>=1.4.1',
+        'sima>=1.0.0',
+        'guiqwt>=3.0.0',
+        'guidata>=1.7.0',
+        'pythonqwt',
     ],
     package_data={
         'roibuddy': [
